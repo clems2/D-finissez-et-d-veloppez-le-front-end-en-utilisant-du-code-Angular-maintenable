@@ -3,6 +3,7 @@ import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
+import { BackComponent } from 'src/app/components/back/back.component';
 import { CountryDatas } from 'src/app/models/country-datas';
 import { ParticipationDatas } from 'src/app/models/participation-datas';
 

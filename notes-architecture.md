@@ -25,6 +25,7 @@
 | 16              | Utilisation de `any`.                                 | Remplacer par `number`, comme les autres variables similaires. |
 | 27, 30, 32, 34… | Utilisation de `any` pour le mapping des données API. | Utiliser un objet typé (`Record` ou interface dédiée). Créer les interfaces Participation et Olympic comme précisé dans la documentation spécifications.         |
 | 27              | Appel HTTP dans le composant.                        | Créer un `DataService` pour gérer les appels API.           |
+| 48              | Problème de typage medals en paramètre de buildChart()                            | Changer le string[] en number[].     |
 | 48              | Duplication de code (création de chart).              | Factoriser via une `FactoryChart`.                             |
 | 48              | Responsabilité excessive                             | Externaliser la création du chart dans un service dédié. `DataService` pourra servir à ça aussi.     |
 
