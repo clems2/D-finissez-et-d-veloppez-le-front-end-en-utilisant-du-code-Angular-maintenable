@@ -4,8 +4,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
-import { CountryDatas } from 'src/app/models/country-datas';
-import { ParticipationDatas } from 'src/app/models/participation-datas';
+import { Olympic } from 'src/app/models/olympic';
 
 
 @Component({
@@ -33,7 +32,7 @@ export class CountryComponent implements OnInit {
       map(params => params.get('countryName')),
       filter((countryName): countryName is string => !!countryName), //pareil que countryName !==null
       switchMap(countryName => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-        this.http.get<CountryDatas[]>(this.olympicUrl).pipe(
+        this.http.get<Olympic[]>(this.olympicUrl).pipe(
           map(data => {
             const country = data.find(c => c.country === countryName);
             if (!country) {
