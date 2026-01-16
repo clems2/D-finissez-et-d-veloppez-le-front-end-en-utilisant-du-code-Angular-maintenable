@@ -2,6 +2,9 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
+import { filter, map, switchMap } from 'rxjs';
+import { CountryDatas } from 'src/app/models/country-datas';
+import { ParticipationDatas } from 'src/app/models/participation-datas';
 
 
 @Component({
@@ -12,9 +15,9 @@ import Chart from 'chart.js/auto';
 })
 export class CountryComponent implements OnInit {
   private olympicUrl = './assets/mock/olympic.json';
-  public lineChart!: Chart<"line", string[], number>;
+  public lineChart!: Chart<"line", number[], number>;
   public titlePage: string = '';
-  public totalEntries: any = 0;
+  public totalEntries: number = 0;
   public totalMedals: number = 0;
   public totalAthletes: number = 0;
   public error!: string;
@@ -23,30 +26,39 @@ export class CountryComponent implements OnInit {
   }
 
   ngOnInit() {
-    let countryName: string | null = null
-    this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName'));
-    this.http.get<any[]>(this.olympicUrl).pipe().subscribe(
-      (data) => {
-        if (data && data.length > 0) {
-          const selectedCountry = data.find((i: any) => i.country === countryName);
-          this.titlePage = selectedCountry.country;
-          const participations = selectedCountry?.participations.map((i: any) => i);
-          this.totalEntries = participations?.length ?? 0;
-          const years = selectedCountry?.participations.map((i: any) => i.year) ?? [];
-          const medals = selectedCountry?.participations.map((i: any) => i.medalsCount.toString()) ?? [];
-          this.totalMedals = medals.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
-          const nbAthletes = selectedCountry?.participations.map((i: any) => i.athleteCount.toString()) ?? []
-          this.totalAthletes = nbAthletes.reduce((accumulator: any, item: any) => accumulator + parseInt(item), 0);
-          this.buildChart(years, medals);
-        }
-      },
-      (error: HttpErrorResponse) => {
-        this.error = error.message
+    //let countryName: string | null = null
+    //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
+    this.route.paramMap.pipe(
+      map(params => params.get('countryName')),
+      filter((countryName): countryName is string => !!countryName), //pareil que countryName !==null
+      switchMap(countryName => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
+        this.http.get<CountryDatas[]>(this.olympicUrl).pipe(
+          map(data => {
+            const country = data.find(c => c.country === countryName);
+            if (!country) {
+              throw new Error('Country not found');
+            }
+            return country;
+          })
+        )
+      )
+    ).subscribe(
+      (country)=>{
+        this.titlePage = country.country;
+        const participations = country.participations;
+        this.totalEntries = participations.length;
+        const years = participations.map(p => p.year);
+        const medals = participations.map(p => p.medalsCount);
+        this.totalMedals = medals.reduce((acc,p) => acc + p, 0);
+        const nbAthletes = participations.map(p => p.athleteCount);
+        this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
+        this.buildChart(years, medals);
       }
-    );
+        
+    )
   }
 
-  buildChart(years: number[], medals: string[]) {
+  buildChart(years: number[], medals: number[]) {
     const lineChart = new Chart("countryChart", {
       type: 'line',
       data: {
