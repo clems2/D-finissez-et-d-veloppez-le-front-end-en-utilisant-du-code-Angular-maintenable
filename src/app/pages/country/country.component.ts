@@ -5,6 +5,7 @@ import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
 import { Olympic } from 'src/app/models/olympic';
+import { DataService } from 'src/app/services/data.service';
 
 
 @Component({
@@ -22,7 +23,7 @@ export class CountryComponent implements OnInit {
   public totalAthletes: number = 0;
   public error!: string;
 
-  constructor(private route: ActivatedRoute, private router: Router, private http: HttpClient) {
+  constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 
   ngOnInit() {
@@ -32,15 +33,7 @@ export class CountryComponent implements OnInit {
       map(params => params.get('countryName')),
       filter((countryName): countryName is string => !!countryName), //pareil que countryName !==null
       switchMap(countryName => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-        this.http.get<Olympic[]>(this.olympicUrl).pipe(
-          map(data => {
-            const country = data.find(c => c.country === countryName);
-            if (!country) {
-              throw new Error('Country not found');
-            }
-            return country;
-          })
-        )
+        this.dataService.getOlympicByCountry(countryName)
       )
     ).subscribe(
       (country)=>{
