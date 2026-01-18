@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
 import { Olympic } from 'src/app/models/olympic';
 import { Participation } from 'src/app/models/participation';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-home',
@@ -11,30 +12,25 @@ import { Participation } from 'src/app/models/participation';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  private olympicUrl = './assets/mock/olympic.json';
   public pieChart!: Chart<"pie", number[], string>;
   public totalCountries: number = 0
   public totalJOs: number = 0
   public error!:string
   titlePage: string = "Medals per Country";
 
-  constructor(private router: Router, private http:HttpClient) { }
+  constructor(private router: Router, private dataservice:DataService) { }
 
   ngOnInit() {
-    this.http.get<Olympic[]>(this.olympicUrl).subscribe(
-      (data) => {
-        console.log(`Liste des données : ${JSON.stringify(data)}`); //TODO A RETIRER PLUS TARD
-        if (data && data.length > 0) {
-          this.totalJOs = Array.from(new Set(data.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
-          const countries: string[] = data.map((olympic: Olympic) => olympic.country);
+    this.dataservice.getOlympics().subscribe(
+      olympics =>{
+        console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
+        if (olympics && olympics.length > 0) {
+          this.totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
+          const countries: string[] = olympics.map((olympic: Olympic) => olympic.country);
           this.totalCountries = countries.length;
-          const sumOfAllMedalsYears = data.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
+          const sumOfAllMedalsYears = olympics.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
           this.buildPieChart(countries, sumOfAllMedalsYears);
         }
-      },
-      (error:HttpErrorResponse) => {
-        console.log(`erreur : ${error}`);
-        this.error = error.message
       }
     )
   }
