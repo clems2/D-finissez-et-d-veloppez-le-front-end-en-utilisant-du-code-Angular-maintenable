@@ -4,6 +4,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
+import { DataCard } from 'src/app/models/data-card';
 import { Olympic } from 'src/app/models/olympic';
 import { DataService } from 'src/app/services/data.service';
 
@@ -22,7 +23,7 @@ export class CountryComponent implements OnInit {
   public totalMedals: number = 0;
   public totalAthletes: number = 0;
   public error!: string;
-
+  public dataCards : DataCard[] = [];
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 
@@ -45,6 +46,11 @@ export class CountryComponent implements OnInit {
         this.totalMedals = medals.reduce((acc,p) => acc + p, 0);
         const nbAthletes = participations.map(p => p.athleteCount);
         this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
+        this.dataCards = [
+          { label: 'Number of Entries', value: this.totalEntries },
+          { label: 'Number of Medals', value: this.totalMedals },
+          { label: 'Number of Athletes', value: this.totalAthletes }
+        ];
         this.buildChart(years, medals);
       }
         
