@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
+import { DataCard } from 'src/app/models/data-card';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-header',
@@ -8,5 +10,10 @@ import { Component } from '@angular/core';
   styleUrl: './header.component.scss'
 })
 export class HeaderComponent {
+  @Input() title!: string;
+  @Input() dataCards : DataCard[] = [];
+  
+
 
 }
+  
