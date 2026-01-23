@@ -2,15 +2,17 @@ import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {Component, OnInit} from '@angular/core';
 import { Router } from '@angular/router';
 import Chart from 'chart.js/auto';
+import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
 import { Olympic } from 'src/app/models/olympic';
 import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
-import { DataCardComponent } from 'src/app/templates/data-card/data-card.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
+  standalone: true,
+  imports: [HeaderComponent],
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {

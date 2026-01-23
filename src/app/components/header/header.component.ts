@@ -1,11 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { DataCard } from 'src/app/models/data-card';
-import { DataService } from 'src/app/services/data.service';
+import { DataCardComponent } from 'src/app/templates/data-card/data-card.component';
 
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [],
+  imports: [DataCardComponent],
   templateUrl: './header.component.html',
   styleUrl: './header.component.scss'
 })

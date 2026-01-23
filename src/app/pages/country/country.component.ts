@@ -4,6 +4,7 @@ import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
+import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
 import { Olympic } from 'src/app/models/olympic';
 import { DataService } from 'src/app/services/data.service';
@@ -12,6 +13,8 @@ import { DataService } from 'src/app/services/data.service';
 @Component({
   selector: 'app-country',
   templateUrl: './country.component.html',
+  standalone: true,
+  imports: [HeaderComponent, BackComponent], 
   styleUrls: ['./country.component.scss'],
 //  changeDetection : ChangeDetectionStrategy.OnPush
 })

@@ -8,10 +8,11 @@ import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CountryComponent } from "./pages/country/country.component";
 import { BackComponent } from './components/back/back.component';
 import { DataCardComponent } from './templates/data-card/data-card.component';
+import { HeaderComponent } from './components/header/header.component';
 
 @NgModule({
-  declarations: [AppComponent, HomeComponent, NotFoundComponent, CountryComponent],
-  imports: [BrowserModule, AppRoutingModule, BackComponent, DataCardComponent],
+  declarations: [AppComponent, ],
+  imports: [BrowserModule, AppRoutingModule, BackComponent, HeaderComponent, DataCardComponent, HomeComponent, NotFoundComponent, CountryComponent ],
   providers: [provideHttpClient()],
   bootstrap: [AppComponent],
 })

@@ -1,10 +1,5 @@
 <div>
-  <div>
-    <div class="center">
-      <div>{{ titlePage }}</div>
-    </div>
-    <app-data-card [cards]="dataCards"></app-data-card>
-  </div>
+  <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
   <div class="chart-container wrapper-container">
     <div class="container">
       <canvas id="countryChart">{{ lineChart }}</canvas>
