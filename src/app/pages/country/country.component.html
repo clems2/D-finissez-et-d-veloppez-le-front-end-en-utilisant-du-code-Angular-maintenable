@@ -1,10 +1,5 @@
 <div>
   <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
-  <div class="chart-container wrapper-container">
-    <div class="container">
-      <canvas id="countryChart">{{ lineChart }}</canvas>
-      <h2>Date</h2>
-    </div>
-  </div>
+  <app-chart-container [type]="'line'" [labels]="years" [values]="medals" legend="Medals Over Years"></app-chart-container>
   <app-back [link]="['']" text="Go back"></app-back>
 </div>

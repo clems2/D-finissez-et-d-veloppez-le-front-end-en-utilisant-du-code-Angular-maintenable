@@ -1,4 +1,4 @@
 <div>
   <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
-  <canvas id="DashboardPieChart">{{ pieChart }}</canvas>
+  <app-chart-container [type]="'pie'" [labels]="countries" [values]="sumOfAllMedalsYears" legend="Total Medals by Country"></app-chart-container>
 </div>

@@ -1,12 +1,11 @@
-import {HttpClient, HttpErrorResponse} from '@angular/common/http';
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, switchMap } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
+import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
-import { Olympic } from 'src/app/models/olympic';
 import { DataService } from 'src/app/services/data.service';
 
 
@@ -14,12 +13,11 @@ import { DataService } from 'src/app/services/data.service';
   selector: 'app-country',
   templateUrl: './country.component.html',
   standalone: true,
-  imports: [HeaderComponent, BackComponent], 
+  imports: [HeaderComponent, ChartContainerComponent, BackComponent], 
   styleUrls: ['./country.component.scss'],
 //  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class CountryComponent implements OnInit {
-  private olympicUrl = './assets/mock/olympic.json';
   public lineChart!: Chart<"line", number[], number>;
   public titlePage: string = '';
   public totalEntries: number = 0;
@@ -27,6 +25,9 @@ export class CountryComponent implements OnInit {
   public totalAthletes: number = 0;
   public error!: string;
   public dataCards : DataCard[] = [];
+  //CHART PARAMS
+  public years: number[] = [];
+  public medals: number[] = [];
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 
@@ -44,9 +45,9 @@ export class CountryComponent implements OnInit {
         this.titlePage = country.country;
         const participations = country.participations;
         this.totalEntries = participations.length;
-        const years = participations.map(p => p.year);
-        const medals = participations.map(p => p.medalsCount);
-        this.totalMedals = medals.reduce((acc,p) => acc + p, 0);
+        this.years = participations.map(p => p.year);
+        this.medals = participations.map(p => p.medalsCount);
+        this.totalMedals = this.medals.reduce((acc,p) => acc + p, 0);
         const nbAthletes = participations.map(p => p.athleteCount);
         this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
         this.dataCards = [
@@ -54,29 +55,9 @@ export class CountryComponent implements OnInit {
           { label: 'Number of Medals', value: this.totalMedals },
           { label: 'Number of Athletes', value: this.totalAthletes }
         ];
-        this.buildChart(years, medals);
+//        this.buildChart(years, medals);
       }
         
     )
-  }
-
-  buildChart(years: number[], medals: number[]) {
-    const lineChart = new Chart("countryChart", {
-      type: 'line',
-      data: {
-        labels: years,
-        datasets: [
-          {
-            label: "medals",
-            data: medals,
-            backgroundColor: '#0b868f'
-          },
-        ]
-      },
-      options: {
-        aspectRatio: 2.5
-      }
-    });
-    this.lineChart = lineChart;
   }
 }
