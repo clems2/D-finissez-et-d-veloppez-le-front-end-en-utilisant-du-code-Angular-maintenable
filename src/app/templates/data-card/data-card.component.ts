@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, input} from '@angular/core';
 import { DataCard } from 'src/app/models/data-card';
 
 @Component({
@@ -10,5 +10,5 @@ import { DataCard } from 'src/app/models/data-card';
   styleUrl: './data-card.component.scss'
 })
 export class DataCardComponent {
-  @Input() cards: DataCard[] = [];
+  cards = input<DataCard[]>([]);
 }
