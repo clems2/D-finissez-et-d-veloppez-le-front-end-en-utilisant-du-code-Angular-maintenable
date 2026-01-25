@@ -1,5 +1,5 @@
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, SimpleChanges, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { AfterViewInit, Component, effect, ElementRef, input, OnDestroy, signal, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
 import Chart, { ChartType } from 'chart.js/auto';
 
 @Component({
@@ -9,46 +9,60 @@ import Chart, { ChartType } from 'chart.js/auto';
   templateUrl: './chart-container.component.html',
   styleUrl: './chart-container.component.scss'
 })
-export class ChartContainerComponent implements AfterViewInit, OnDestroy, OnChanges {
-  @Input() type!: ChartType;
-  @Input() labels: (string | number)[] = [];
-  @Input() values: number[] = [];
-  @Input() legend: string = '';
+export class ChartContainerComponent implements AfterViewInit, OnDestroy {
+  type = input<ChartType>();
+  labels = input<(string | number)[]>([]);
+  values = input<number[]>([]);
+  legend = input<string>(''); //Pas obligatoirement une input signal
   @ViewChild('chartCanvas') canvas!: ElementRef<HTMLCanvasElement>;
 
-  chart?: Chart;
+  private chart?: Chart;
+  // signal pour indiquer si les éléments sont prêts (notamment le canvas)
+  //private canvasReady = signal(false);
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+
+  constructor(private router: Router) {
+    //Une erreur Runtime m'oblige à utiliser effect() dans un contexte d'injection tel qu'un constructor
+     effect(() => {
+      const type = this.type();
+      const labels = this.labels();
+      const values = this.values();
+
+      if (!type || !labels.length || !values.length) {
+        return;
+      }
+
+      this.buildChart(type, labels, values);
+    });
+   }
+  
   ngAfterViewInit(): void { //TODO implements adapter and Factory
-    this.buildChart();
-  }
-  ngOnChanges(changes: SimpleChanges): void {
-    // Si les labels ou les valeurs changent et que la vue est prête
-    if ((changes['labels'] || changes['values']) && this.canvas) {
-      this.buildChart();
-    }
   }
   ngOnDestroy(): void {
     if (this.chart) {
       this.chart.destroy();
     }
   }
-  private buildChart() {
+  private buildChart(
+    type : ChartType,
+    labels : (string | number)[],
+    values : number[]
+  ) {
     console.log('Labels:', this.labels);
     console.log('Values:', this.values);
     // Détruire le graphique existant s'il y en a un
     if (this.chart) {
       this.chart.destroy();
     }
-    if(this.type == 'line'){
+    if(type == 'line'){
      const chart = new Chart(this.canvas.nativeElement, {
           type: 'line',
           data: {
-            labels: this.labels,
+            labels: labels,
             datasets: [
               {
                 label: "medals",
-                data: this.values,
+                data: values,
                 backgroundColor: '#0b868f'
               },
             ]
@@ -60,14 +74,14 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy, OnChan
         this.chart = chart;
   
     }
-    else if(this.type == 'pie'){
+    else if(type == 'pie'){
       const pieChart = new Chart(this.canvas.nativeElement, {
             type: 'pie',
             data: {
-              labels: this.labels,
+              labels: labels,
               datasets: [{
                 label: 'Medals',
-                data: this.values,
+                data: values,
                 backgroundColor: ['#0b868f', '#adc3de', '#7a3c53', '#8f6263', 'orange', '#94819d'],
                 hoverOffset: 4
               }],
