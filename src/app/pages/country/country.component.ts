@@ -1,7 +1,7 @@
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
-import { filter, map, switchMap } from 'rxjs';
+import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
@@ -28,15 +28,19 @@ export class CountryComponent implements OnInit {
   //CHART PARAMS
   public years: number[] = [];
   public medals: number[] = [];
+  //Unsubscribe signal Destroy
+  private destroy = new Subject<void>();
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 
   ngOnInit() {
     //let countryName: string | null = null
     //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
-    this.route.paramMap.pipe(
+    const subscription = this.route.paramMap.pipe(
       map(params => params.get('countryName')),
       filter((countryName): countryName is string => !!countryName), //pareil que countryName !==null
+      //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
+      takeUntil(this.destroy),
       switchMap(countryName => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
         this.dataService.getOlympicByCountry(countryName)
       )
@@ -56,8 +60,13 @@ export class CountryComponent implements OnInit {
           { label: 'Number of Athletes', value: this.totalAthletes }
         ];
 //        this.buildChart(years, medals);
-      }
-        
+      }   
     )
   }
+  ngOnDestroy(): void {
+    //Émet une valeur pour indiquer la destruction
+    this.destroy.next();
+    this.destroy.complete();
+  }
 }
+//Dans le cas actuel, étant un fichier JSON, on pourrait juste utiliser Rxjs take(1) pour ne prendre qu'une seule émission et éviter les fuites de mémoire. Mais dans le cas d'une API REST, on pourrait avoir des mises à jour régulières des données (via WebSocket par exemple) et il faudrait alors gérer la désinscription dans ngOnDestroy().

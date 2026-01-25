@@ -1,5 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import Chart from 'chart.js/auto';
+import { Subject, takeUntil } from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
@@ -28,10 +29,13 @@ export class HomeComponent implements OnInit {
   public sumOfAllMedalsYears: number[] = [];
   public countries: string[] = [];
 
+  //Signal to unsubscribe when destroying the component
+  private destroy = new Subject<void>();
+
   constructor(private dataservice:DataService) { }
 
   ngOnInit() {
-    this.dataservice.getOlympics().subscribe(
+    this.dataservice.getOlympics().pipe(takeUntil(this.destroy)).subscribe(
       olympics =>{
         console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
         if (olympics && olympics.length > 0) {
@@ -46,6 +50,11 @@ export class HomeComponent implements OnInit {
         }
       }
     )
+  }
+  ngOnDestroy(): void {
+    //Emit a value to indicate destruction
+    this.destroy.next();
+    this.destroy.complete();
   }
 
 }

@@ -48,8 +48,8 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
     labels : (string | number)[],
     values : number[]
   ) {
-    console.log('Labels:', this.labels);
-    console.log('Values:', this.values);
+    console.log('Labels:', this.labels());
+    console.log('Values:', this.values());
     // Détruire le graphique existant s'il y en a un
     if (this.chart) {
       this.chart.destroy();
@@ -75,7 +75,7 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
   
     }
     else if(type == 'pie'){
-      const pieChart = new Chart(this.canvas.nativeElement, {
+      const pieChart = new Chart(this.canvas.nativeElement, { //Dans le code d'origine utiliser le nom de l'id donné dans l'HTML au canvas
             type: 'pie',
             data: {
               labels: labels,
