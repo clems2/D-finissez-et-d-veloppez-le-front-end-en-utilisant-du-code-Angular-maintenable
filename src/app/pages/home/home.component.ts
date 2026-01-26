@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   //Chart params
   public sumOfAllMedalsYears: number[] = [];
   public countries: string[] = [];
-
+  public ids : number[] = [];
   //Signal to unsubscribe when destroying the component
   private destroy = new Subject<void>();
 
@@ -41,6 +41,7 @@ export class HomeComponent implements OnInit {
         if (olympics && olympics.length > 0) {
           this.totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
           this.countries = olympics.map((olympic: Olympic) => olympic.country);
+          this.ids = olympics.map((olympic: Olympic) => olympic.id);
           this.sumOfAllMedalsYears = olympics.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
           this.dataCards = [
             { label: 'Number of Countries', value: this.countries.length },

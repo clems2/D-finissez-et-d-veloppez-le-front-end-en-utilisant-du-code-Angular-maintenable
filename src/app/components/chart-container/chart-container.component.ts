@@ -11,6 +11,7 @@ import Chart, { ChartType } from 'chart.js/auto';
 })
 export class ChartContainerComponent implements AfterViewInit, OnDestroy {
   type = input<ChartType>();
+  ids = input<number[]>([]);
   labels = input<(string | number)[]>([]);
   values = input<number[]>([]);
   legend = input<string>(''); //Pas obligatoirement une input signal
@@ -93,8 +94,9 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
                   const points = pieChart.getElementsAtEventForMode(e.native, 'point', { intersect: true }, true)
                   if (points.length) {
                     const firstPoint = points[0];
-                    const countryName = pieChart.data.labels ? pieChart.data.labels[firstPoint.index] : '';
-                    this.router.navigate(['country', countryName]);
+                    const index = firstPoint.index;
+                    const ids = this.ids();
+                    this.router.navigate(['country', ids[index]]);
                   }
                 }
               }

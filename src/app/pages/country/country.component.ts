@@ -30,19 +30,19 @@ export class CountryComponent implements OnInit {
   public medals: number[] = [];
   //Unsubscribe signal Destroy
   private destroy = new Subject<void>();
-  constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
+  constructor(private route: ActivatedRoute, private dataService : DataService) {
   }
 
   ngOnInit() {
     //let countryName: string | null = null
     //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
     const subscription = this.route.paramMap.pipe(
-      map(params => params.get('countryName')),
-      filter((countryName): countryName is string => !!countryName), //pareil que countryName !==null
+      map(params => Number(params.get('id'))),
+      filter(id => !isNaN(id)), 
       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
       takeUntil(this.destroy),
-      switchMap(countryName => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-        this.dataService.getOlympicByCountry(countryName)
+      switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
+        this.dataService.getOlympicById(id)
       )
     ).subscribe(
       (country)=>{

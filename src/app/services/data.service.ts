@@ -38,5 +38,18 @@ getOlympicByCountry(countryName: string): Observable<Olympic>{
 getOlympics(): Observable<Olympic[]>{
   return this.olympicsObservable;
 }
+
+getOlympicById(id: number): Observable<Olympic> {
+  return this.olympicsObservable.pipe(
+    map(olympics => {
+      const olympic = olympics.find(o => o.id === id);
+      if (!olympic) {
+        throw new Error('Olympic not found');
+      }
+      return olympic;
+    })
+  );
+}
+
 //Array.from(new Set(data.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
 }
