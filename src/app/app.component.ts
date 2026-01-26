@@ -7,7 +7,9 @@ import { DataService } from './services/data.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  constructor(private dataService : DataService){}
+  constructor(private dataService : DataService){
+//    this.dataService.loadOlympics();
+  }
   
   title = 'Olympic Games App';
 }

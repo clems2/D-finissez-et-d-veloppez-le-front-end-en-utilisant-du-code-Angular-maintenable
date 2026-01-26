@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, catchError, map, Observable, shareReplay } from 'rxjs';
+import { BehaviorSubject, catchError, filter, map, Observable, shareReplay } from 'rxjs';
 import { Olympic } from '../models/olympic';
 import { Participation } from '../models/participation';
 
@@ -16,7 +16,7 @@ constructor(private http:HttpClient) {
   this.loadOlympics();
 }
 
-private loadOlympics(): void {
+public loadOlympics(): void {
   this.http.get<Olympic[]>(this.url).subscribe({
     next : data => this.olympicSubject.next(data),
     error : e => console.error(e)
@@ -41,6 +41,7 @@ getOlympics(): Observable<Olympic[]>{
 
 getOlympicById(id: number): Observable<Olympic> {
   return this.olympicsObservable.pipe(
+    filter(olympics => olympics.length > 0),
     map(olympics => {
       const olympic = olympics.find(o => o.id === id);
       if (!olympic) {
