@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
@@ -14,7 +15,7 @@ import { LoadingStatus } from 'src/app/state/loading-state';
   selector: 'app-country',
   templateUrl: './country.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent, BackComponent], 
+  imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf], 
   styleUrls: ['./country.component.scss'],
 //  changeDetection : ChangeDetectionStrategy.OnPush
 })

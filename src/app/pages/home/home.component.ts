@@ -1,3 +1,4 @@
+import { NgIf } from '@angular/common';
 import {Component, OnInit} from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject, takeUntil } from 'rxjs';
@@ -7,12 +8,13 @@ import { DataCard } from 'src/app/models/data-card';
 import { Olympic } from 'src/app/models/olympic';
 import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
+import { LoadingStatus } from 'src/app/state/loading-state';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent],
+  imports: [HeaderComponent, ChartContainerComponent, NgIf],
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
@@ -32,26 +34,40 @@ export class HomeComponent implements OnInit {
   //Signal to unsubscribe when destroying the component
   private destroy = new Subject<void>();
 
+  //state courant pour l'affichage HTML
+  public state: LoadingStatus = 'loading';
+  public stateError: string = '';
+
   constructor(private dataservice:DataService) { }
 
   ngOnInit() {
-    this.dataservice.getOlympics().pipe(takeUntil(this.destroy)).subscribe(
-      olympics =>{
-        console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
-        if (olympics && olympics.length > 0) {
-          this.totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
-          this.countries = olympics.map((olympic: Olympic) => olympic.country);
-          this.ids = olympics.map((olympic: Olympic) => olympic.id);
-          this.sumOfAllMedalsYears = olympics.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
-          this.dataCards = [
-            { label: 'Number of Countries', value: this.countries.length },
-            { label: 'Number of JOs', value: this.totalJOs }
-          ];
-//          this.buildPieChart(this.countries, this.sumOfAllMedalsYears); // TODO A RETirer et laisser la responsabilité au ChatContainer
+    this.dataservice.stateObservable.pipe(takeUntil(this.destroy)).subscribe(
+      state => {
+        this.state = state.status;
+        if (state.status !== 'loaded') {
+          this.stateError = state.error || 'Unknown error';
+          return;
         }
-      }
-    )
+        
+        const olympics = state.data;
+        console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
+        if (!olympics || olympics.length === 0) {
+          this.state = 'empty';
+          return;
+        }
+
+        this.totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
+        this.countries = olympics.map((olympic: Olympic) => olympic.country);
+        this.ids = olympics.map((olympic: Olympic) => olympic.id);
+        this.sumOfAllMedalsYears = olympics.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
+        this.dataCards = [
+          { label: 'Number of Countries', value: this.countries.length },
+          { label: 'Number of JOs', value: this.totalJOs }
+        ];
+//          this.buildPieChart(this.countries, this.sumOfAllMedalsYears); // TODO A RETirer et laisser la responsabilité au ChatContainer
+      });   
   }
+
   ngOnDestroy(): void {
     //Emit a value to indicate destruction
     this.destroy.next();
