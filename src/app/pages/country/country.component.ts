@@ -7,6 +7,7 @@ import { ChartContainerComponent } from 'src/app/components/chart-container/char
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
 import { DataService } from 'src/app/services/data.service';
+import { LoadingStatus } from 'src/app/state/loading-state';
 
 
 @Component({
@@ -30,8 +31,12 @@ export class CountryComponent implements OnInit {
   public medals: number[] = [];
   //Unsubscribe signal Destroy
   private destroy = new Subject<void>();
-  constructor(private route: ActivatedRoute, private dataService : DataService) {
+  // Stocké le state actuel pour adapter l'affichage HTML
+  public state: LoadingStatus = 'loading';
+  public stateError: string = '';
+  constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
+
 
   ngOnInit() {
     //let countryName: string | null = null
@@ -42,23 +47,41 @@ export class CountryComponent implements OnInit {
       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
       takeUntil(this.destroy),
       switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-        this.dataService.getOlympicById(id)
+        this.dataService.stateObservable.pipe(
+          filter(state => state.status !=='loading'),
+          map(state => ({state, id}))
+        ) 
       )
     ).subscribe(
-      (country)=>{
-        this.titlePage = country.country;
-        const participations = country.participations;
-        this.totalEntries = participations.length;
-        this.years = participations.map(p => p.year);
-        this.medals = participations.map(p => p.medalsCount);
-        this.totalMedals = this.medals.reduce((acc,p) => acc + p, 0);
-        const nbAthletes = participations.map(p => p.athleteCount);
-        this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
-        this.dataCards = [
-          { label: 'Number of Entries', value: this.totalEntries },
-          { label: 'Number of Medals', value: this.totalMedals },
-          { label: 'Number of Athletes', value: this.totalAthletes }
-        ];
+      ({state, id})=>{
+        this.state = state.status;
+        if( state.status === 'error' || state.status === 'empty'){
+          this.stateError = state.error || 'Unknown error';
+          this.router.navigate(['/not-found']);
+          return;
+        }
+        if(state.status === 'loaded'){
+          const country = state.data?.find(o => o.id === id);
+          if (!country) {
+            this.router.navigate(['/not-found']);
+            return;
+          }
+          console.log(`Données du pays : ${JSON.stringify(country)}`); //TODO A RETIRER PLUS TARD
+          this.titlePage = country.country;
+          const participations = country.participations;
+          this.totalEntries = participations.length;
+          this.years = participations.map(p => p.year);
+          this.medals = participations.map(p => p.medalsCount);
+          this.totalMedals = this.medals.reduce((acc,p) => acc + p, 0);
+          const nbAthletes = participations.map(p => p.athleteCount);
+          this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
+          this.dataCards = [
+            { label: 'Number of Entries', value: this.totalEntries },
+            { label: 'Number of Medals', value: this.totalMedals },
+            { label: 'Number of Athletes', value: this.totalAthletes }
+          ];
+        }
+       
 //        this.buildChart(years, medals);
       }   
     )
