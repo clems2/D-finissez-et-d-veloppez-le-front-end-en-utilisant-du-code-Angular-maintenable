@@ -44,22 +44,37 @@ export class CountryComponent implements OnInit {
 
 
   ngOnInit() {
+    
     //let countryName: string | null = null
     //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
-    const subscription = this.route.paramMap.pipe(
+
+    //SWITCHMAP VERSION
+//     this.route.paramMap.pipe(
+// //      delay(1000), //Simule un délai de chargement pour voir le spinner
+//       map(params => Number(params.get('id'))),
+//       filter(id => !isNaN(id)), 
+//       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
+//       takeUntilDestroyed(this.destroyRef),
+//       switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
+//         this.dataService.stateObservable.pipe(
+//           filter(state => state.status !=='loading'),
+//           map(state => ({state, id}))
+//         ) 
+//       )
+//     )
+
+    //SNAPSHOT VERSION
+    //SNAPSHOT of the param id
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    if (isNaN(id)) {
+      this.router.navigate(['/not-found']);
+      return;
+    }
+    this.dataService.stateObservable.pipe(
 //      delay(1000), //Simule un délai de chargement pour voir le spinner
-      map(params => Number(params.get('id'))),
-      filter(id => !isNaN(id)), 
-      //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
-      takeUntilDestroyed(this.destroyRef),
-      switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-        this.dataService.stateObservable.pipe(
-          filter(state => state.status !=='loading'),
-          map(state => ({state, id}))
-        ) 
-      )
-    ).subscribe(
-      ({state, id})=>{
+      filter(state => state.status !=='loading'),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(state => {
         this.state = state.status;
         if( state.status === 'error' || state.status === 'empty'){
           this.stateError = state.error || 'Unknown error';
@@ -72,7 +87,6 @@ export class CountryComponent implements OnInit {
             this.router.navigate(['/not-found']);
             return;
           }
-          console.log(`Données du pays : ${JSON.stringify(country)}`); //TODO A RETIRER PLUS TARD
           this.titlePage = country.country;
           const participations = country.participations;
           this.totalEntries = participations.length;
@@ -86,9 +100,7 @@ export class CountryComponent implements OnInit {
             { label: 'Number of Medals', value: this.totalMedals },
             { label: 'Number of Athletes', value: this.totalAthletes }
           ];
-        }
-       
-//        this.buildChart(years, medals);
+        }       
       }   
     )
   }
