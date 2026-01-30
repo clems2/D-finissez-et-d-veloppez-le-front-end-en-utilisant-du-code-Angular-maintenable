@@ -1,4 +1,4 @@
-import { Component, input, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
 import { DataCard } from 'src/app/models/data-card';
 import { DataCardComponent } from 'src/app/templates/data-card/data-card.component';
 
@@ -7,7 +7,8 @@ import { DataCardComponent } from 'src/app/templates/data-card/data-card.compone
   standalone: true,
   imports: [DataCardComponent],
   templateUrl: './header.component.html',
-  styleUrl: './header.component.scss'
+  styleUrl: './header.component.scss',
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class HeaderComponent {
   title = input<string>();

@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { RouterModule } from '@angular/router';
 
 @Component({
@@ -6,7 +6,8 @@ import { RouterModule } from '@angular/router';
   standalone: true,
   imports: [RouterModule],
   templateUrl: './back.component.html',
-  styleUrl: './back.component.scss'
+  styleUrl: './back.component.scss',
+  changeDetection : ChangeDetectionStrategy.OnPush
 })
 export class BackComponent {
   @Input() link: string[] = ['']; //route par défaut

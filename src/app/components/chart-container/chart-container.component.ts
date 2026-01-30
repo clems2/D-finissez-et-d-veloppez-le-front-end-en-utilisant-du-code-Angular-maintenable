@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, effect, ElementRef, input, OnDestroy, signal, ViewChild } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, Component, effect, ElementRef, input, OnDestroy, signal, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import Chart, { ChartType } from 'chart.js/auto';
 
@@ -7,7 +7,9 @@ import Chart, { ChartType } from 'chart.js/auto';
   standalone: true,
   imports: [],
   templateUrl: './chart-container.component.html',
-  styleUrl: './chart-container.component.scss'
+  styleUrl: './chart-container.component.scss',
+  changeDetection : ChangeDetectionStrategy.OnPush
+  
 })
 export class ChartContainerComponent implements AfterViewInit, OnDestroy {
   type = input<ChartType>();
