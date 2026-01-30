@@ -49,6 +49,7 @@ getOlympicByCountry(countryName: string): Observable<Olympic>{
 
 getOlympics(): Observable<Olympic[]>{
   return this.olympicStateSubject.pipe(
+    
     map(state => state.data),
     filter((data): data is Olympic[] => data !== undefined)
     );

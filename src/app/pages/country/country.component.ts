@@ -3,20 +3,21 @@ import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@a
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
-import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { delay, filter, map, Subject, switchMap, takeUntil } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
+import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
 
 
 @Component({
   selector: 'app-country',
   templateUrl: './country.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf], 
+  imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent], 
   styleUrls: ['./country.component.scss'],
 //  changeDetection : ChangeDetectionStrategy.OnPush
 })
@@ -46,6 +47,7 @@ export class CountryComponent implements OnInit {
     //let countryName: string | null = null
     //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
     const subscription = this.route.paramMap.pipe(
+//      delay(1000), //Simule un délai de chargement pour voir le spinner
       map(params => Number(params.get('id'))),
       filter(id => !isNaN(id)), 
       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement

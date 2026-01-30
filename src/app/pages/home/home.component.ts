@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
 import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import Chart from 'chart.js/auto';
-import { Subject, takeUntil } from 'rxjs';
+import { delay, Subject, takeUntil } from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
@@ -10,12 +10,13 @@ import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent, NgIf],
+  imports: [HeaderComponent, ChartContainerComponent, NgIf, SpinnerComponent],
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
@@ -44,7 +45,10 @@ export class HomeComponent implements OnInit {
   constructor(private dataservice:DataService) { }
 
   ngOnInit() {
-    this.dataservice.stateObservable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
+    this.dataservice.stateObservable.pipe(
+//      delay(5000), //Simule un délai de chargement pour voir le spinner
+      takeUntilDestroyed(this.destroyRef))
+      .subscribe(
       state => {
         this.state = state.status;
         if (state.status !== 'loaded') {
