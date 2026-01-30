@@ -1,5 +1,6 @@
 import { NgIf } from '@angular/common';
-import {ChangeDetectionStrategy, Component, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {ActivatedRoute, ParamMap, Router} from '@angular/router';
 import Chart from 'chart.js/auto';
 import { filter, map, Subject, switchMap, takeUntil } from 'rxjs';
@@ -30,8 +31,10 @@ export class CountryComponent implements OnInit {
   //CHART PARAMS
   public years: number[] = [];
   public medals: number[] = [];
-  //Unsubscribe signal Destroy
-  private destroy = new Subject<void>();
+  //Unsubscribe signal Destroy with OnDestroy()
+  //private destroy = new Subject<void>();
+  //DestroyRef injection
+  private destroyRef = inject(DestroyRef);
   // Stocké le state actuel pour adapter l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
@@ -46,7 +49,7 @@ export class CountryComponent implements OnInit {
       map(params => Number(params.get('id'))),
       filter(id => !isNaN(id)), 
       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
-      takeUntil(this.destroy),
+      takeUntilDestroyed(this.destroyRef),
       switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
         this.dataService.stateObservable.pipe(
           filter(state => state.status !=='loading'),
@@ -87,10 +90,12 @@ export class CountryComponent implements OnInit {
       }   
     )
   }
-  ngOnDestroy(): void {
-    //Émet une valeur pour indiquer la destruction
-    this.destroy.next();
-    this.destroy.complete();
-  }
+ 
+  //Méthode with Subject and signal and takeUntil
+  // ngOnDestroy(): void {
+  //   //Émet une valeur pour indiquer la destruction
+  //   this.destroy.next();
+  //   this.destroy.complete();
+  // }
 }
 //Dans le cas actuel, étant un fichier JSON, on pourrait juste utiliser Rxjs take(1) pour ne prendre qu'une seule émission et éviter les fuites de mémoire. Mais dans le cas d'une API REST, on pourrait avoir des mises à jour régulières des données (via WebSocket par exemple) et il faudrait alors gérer la désinscription dans ngOnDestroy().

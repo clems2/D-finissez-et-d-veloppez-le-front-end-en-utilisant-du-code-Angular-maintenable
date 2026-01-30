@@ -1,5 +1,5 @@
 import { NgIf } from '@angular/common';
-import {Component, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit} from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject, takeUntil } from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
@@ -9,6 +9,7 @@ import { Olympic } from 'src/app/models/olympic';
 import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -31,17 +32,19 @@ export class HomeComponent implements OnInit {
   public sumOfAllMedalsYears: number[] = [];
   public countries: string[] = [];
   public ids : number[] = [];
-  //Signal to unsubscribe when destroying the component
-  private destroy = new Subject<void>();
-
+  //Signal to unsubscribe when destroying the component with takeUntilDestroyed()
+  //  private destroy = new Subject<void>();
+  //DestroyRef injection
+  private destroyRef = inject(DestroyRef);
   //state courant pour l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
 
+
   constructor(private dataservice:DataService) { }
 
   ngOnInit() {
-    this.dataservice.stateObservable.pipe(takeUntil(this.destroy)).subscribe(
+    this.dataservice.stateObservable.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(
       state => {
         this.state = state.status;
         if (state.status !== 'loaded') {
@@ -68,11 +71,13 @@ export class HomeComponent implements OnInit {
       });   
   }
 
+//Without DestroyRef and takeUntilDestroyed (using Subject)
+  /*
   ngOnDestroy(): void {
     //Emit a value to indicate destruction
     this.destroy.next();
     this.destroy.complete();
   }
-
+*/
 }
 
