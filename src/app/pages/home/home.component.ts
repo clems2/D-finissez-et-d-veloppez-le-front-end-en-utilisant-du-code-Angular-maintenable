@@ -57,7 +57,7 @@ export class HomeComponent implements OnInit {
         }
         
         const olympics = state.data;
-        console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
+        // console.log(`Liste des données : ${JSON.stringify(olympics)}`); //TODO A RETIRER PLUS TARD
         if (!olympics || olympics.length === 0) {
           this.state = 'empty';
           return;
