@@ -1,19 +1,16 @@
-
-.wrapper-container {
-    display: flex;
-    justify-content: center;
+.page-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
 }
-
-.container {
-    width: 50%;
-    h2{
-        text-align: center;
-        color: gray;
-    }
+.page-content{
+  width: 100%;
 }
+/* Téléphone */
+@media (max-width: 768px) {
 
-@media screen and (max-width: 1000px) {
-    .container {
-        width: 100%;
-    }
+  .page-container {
+    max-width: 90%;
+  }
+
 }

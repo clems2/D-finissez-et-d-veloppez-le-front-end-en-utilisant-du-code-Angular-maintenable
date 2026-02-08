@@ -17,3 +17,12 @@
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+@media (max-width: 768px) {
+  .spinner {
+    margin-top: 30px;
+  }
+  .loader {
+    width: 36px;
+    height: 36px;
+  } 
+}

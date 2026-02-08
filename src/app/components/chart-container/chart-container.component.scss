@@ -1,18 +1,32 @@
 .wrapper-container {
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 .container {
-    width: 50%;
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    //fixe la hauteur car le aspect ration est dégueulasse sur mobile
+    height: 400px;
+    canvas {
+        width: 100%;
+        height: 100%;
+    }
     h2{
         text-align: center;
         color: gray;
+        font-size: 26px;
     }
 }
 
-@media screen and (max-width: 1000px) {
+/* Téléphone */
+@media (max-width: 768px) {
     .container {
-        width: 100%;
+        height: 300px;
+        h2{
+            font-size: 18px;
+        }
     }
 }

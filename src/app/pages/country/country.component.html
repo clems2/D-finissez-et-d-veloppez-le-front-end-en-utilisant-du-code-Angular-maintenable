@@ -1,24 +1,26 @@
-<!-- Loading -->
-<div *ngIf="state === 'loading'" >  
- <app-spinner></app-spinner>
-</div>
+<div class="page-container">
+  <!-- Loading -->
+  <div class="page-content" *ngIf="state === 'loading'" >  
+  <app-spinner></app-spinner>
+  </div>
 
-<!-- Error --> 
-<div *ngIf="state === 'error'" >  
- <app-header title="Error"></app-header> 
- <p>{{ stateError }}</p>
- <app-back [link]="['']" text="Go back"></app-back>
-</div>
-
-<!-- Empty -->
-<div *ngIf="state === 'empty'" >  
- <app-header title="Aucune Donnée"></app-header> 
- <app-back [link]="['']" text="Go back"></app-back>
-</div>
-
-<!-- Loaded-->
-<div *ngIf="state === 'loaded'">
-  <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
-  <app-chart-container [type]="'line'" [labels]="years" [values]="medals" legend="Medals Over Years"></app-chart-container>
+  <!-- Error --> 
+  <div class="page-content" *ngIf="state === 'error'" >  
+  <app-header title="Error"></app-header> 
+  <p>{{ stateError }}</p>
   <app-back [link]="['']" text="Go back"></app-back>
+  </div>
+
+  <!-- Empty -->
+  <div class="page-content" *ngIf="state === 'empty'" >  
+  <app-header title="Aucune Donnée"></app-header> 
+  <app-back [link]="['']" text="Go back"></app-back>
+  </div>
+
+  <!-- Loaded-->
+  <div class="page-content" *ngIf="state === 'loaded'">
+    <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
+    <app-chart-container [type]="'line'" [labels]="years" [values]="medals" legend="Medals Over Years"></app-chart-container>
+    <app-back [link]="['']" text="Go back"></app-back>
+  </div>
 </div>

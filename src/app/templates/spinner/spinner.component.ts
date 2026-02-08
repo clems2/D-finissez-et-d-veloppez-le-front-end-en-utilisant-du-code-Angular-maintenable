@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-spinner',
@@ -6,6 +6,7 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './spinner.component.html',
   styleUrl: './spinner.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SpinnerComponent {
 

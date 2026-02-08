@@ -1,0 +1,16 @@
+.page-container {
+  width: 100%;
+  max-width: 1000px;
+  margin: auto;
+}
+.page-content{
+  width: 100%;
+}
+/* Téléphone */
+@media (max-width: 768px) {
+
+  .page-container {
+    max-width: 90%;
+  }
+
+}

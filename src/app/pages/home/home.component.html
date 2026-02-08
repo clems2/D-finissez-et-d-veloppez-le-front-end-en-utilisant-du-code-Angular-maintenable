@@ -1,20 +1,22 @@
-<!-- Loading -->
-<div *ngIf="state === 'loading'">
-  <app-header [title]="titlePage"></app-header>
-  <app-spinner></app-spinner>
-</div>
+<div class="page-container">
+  <!-- Loading -->
+  <div class="page-content" *ngIf="state === 'loading'">
+    <app-header [title]="titlePage"></app-header>
+    <app-spinner></app-spinner>
+  </div>
 
-<!-- Error -->
-<div *ngIf="state === 'error'">
-  <app-header title="Error"></app-header> 
-  <p>{{ stateError }}</p>
-</div>
-<!-- Empty -->
-<div *ngIf="state === 'empty'">
-  <app-header title="Aucune Donnée"></app-header>
-</div>
-<!-- Loaded-->
-<div *ngIf="state === 'loaded'">
-  <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
-  <app-chart-container [type]="'pie'" [ids]="ids" [labels]="countries" [values]="sumOfAllMedalsYears" legend="Total Medals by Country"></app-chart-container>
+  <!-- Error -->
+  <div class="page-content" *ngIf="state === 'error'">
+    <app-header title="Error"></app-header> 
+    <p>{{ stateError }}</p>
+  </div>
+  <!-- Empty -->
+  <div class="page-content" *ngIf="state === 'empty'">
+    <app-header title="Aucune Donnée"></app-header>
+  </div>
+  <!-- Loaded-->
+  <div class="page-content" *ngIf="state === 'loaded'">
+    <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
+    <app-chart-container [type]="'pie'" [ids]="ids" [labels]="countries" [values]="sumOfAllMedalsYears" legend="Total Medals by Country"></app-chart-container>
+  </div>
 </div>

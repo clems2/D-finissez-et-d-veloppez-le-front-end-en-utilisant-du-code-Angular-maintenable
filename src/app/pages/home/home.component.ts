@@ -46,7 +46,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.dataservice.stateObservable.pipe(
-//      delay(5000), //Simule un délai de chargement pour voir le spinner
+      // delay(5000), //Simule un délai de chargement pour voir le spinner
       takeUntilDestroyed(this.destroyRef))
       .subscribe(
       state => {

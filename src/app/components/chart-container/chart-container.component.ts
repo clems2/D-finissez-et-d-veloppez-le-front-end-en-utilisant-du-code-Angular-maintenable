@@ -90,7 +90,8 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
               }],
             },
             options: {
-              aspectRatio: 2.5,
+              responsive: true,
+              maintainAspectRatio: false,
               onClick: (e) => {
                 if (e.native) {
                   const points = pieChart.getElementsAtEventForMode(e.native, 'point', { intersect: true }, true)

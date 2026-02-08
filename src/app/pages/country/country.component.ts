@@ -76,11 +76,7 @@ export class CountryComponent implements OnInit {
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(state => {
         this.state = state.status;
-        if( state.status === 'error' || state.status === 'empty'){
-          this.stateError = state.error || 'Unknown error';
-          this.router.navigate(['/not-found']);
-          return;
-        }
+        
         if(state.status === 'loaded'){
           const country = state.data?.find(o => o.id === id);
           if (!country) {
@@ -100,7 +96,12 @@ export class CountryComponent implements OnInit {
             { label: 'Number of Medals', value: this.totalMedals },
             { label: 'Number of Athletes', value: this.totalAthletes }
           ];
-        }       
+        } 
+        else {
+          this.stateError = state.error || 'Unknown error';
+          this.router.navigate(['/not-found']);
+          return;
+        }      
       }   
     )
   }
