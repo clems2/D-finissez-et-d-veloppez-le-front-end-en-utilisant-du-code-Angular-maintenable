@@ -51,8 +51,7 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
     labels : (string | number)[],
     values : number[]
   ) {
-    // console.log('Labels:', this.labels());
-    // console.log('Values:', this.values());
+
     // Détruire le graphique existant s'il y en a un
     if (this.chart) {
       this.chart.destroy();
