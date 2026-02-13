@@ -123,6 +123,8 @@ Rôle : Interface qui mappe la réponse liée aux données d'une participation d
 
 ### HomePage
 
+![Home](./ressources/ScreenshotHomePage.png)
+
 ![Home Page](./ressources/HomePage.svg)
 
 Rôle : Container principal de tous les composants de la HomePage (HeaderComponent, ChartContainer).
@@ -132,6 +134,8 @@ Rôle : Container principal de tous les composants de la HomePage (HeaderCompone
 
 ### CountryPage
 
+![Country](./ressources/ScreenshotCountryPage.png)
+
 ![Country Page](./ressources/CountryPage.svg)
 
 Rôle : Container principal de tous les éléments de la CountryPage (Composant HeaderComponent, ChartContainer, BackComponent).
@@ -140,6 +144,8 @@ Rôle : Container principal de tous les éléments de la CountryPage (Composant 
 
 
 ### Not Found Page
+
+![NotFound](./ressources/ScreenshotNotFoundPage.png)
 
 ![Not Found Page](./ressources/NotFoundPage.svg)
 
