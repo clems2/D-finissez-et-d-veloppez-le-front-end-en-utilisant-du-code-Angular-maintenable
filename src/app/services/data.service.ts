@@ -58,6 +58,4 @@ getOlympics(): Observable<Olympic[]>{
 getOlympicById(id: number): Olympic | undefined {
   return this.olympicStateSubject.value.data?.find(olympic => olympic.id === id);
 }
-
-//Array.from(new Set(data.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
 }

@@ -20,8 +20,8 @@ import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  public pieChart!: Chart<"pie", number[], string>;
-  public totalCountries: number = 0
+  // public pieChart!: Chart<"pie", number[], string>;
+  // public totalCountries: number = 0
   public totalJOs: number = 0
   public error!:string
   titlePage: string = "Medals per Country";

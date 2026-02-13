@@ -19,10 +19,10 @@ import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
   standalone: true,
   imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent], 
   styleUrls: ['./country.component.scss'],
-//  changeDetection : ChangeDetectionStrategy.OnPush // Le fait d'utiliser un snapshot maintenant fait que le composant ne se met plus à jour automatiquement si on change d'ID dans l'URL. Cependant, on push ne permet que de voir les changements d'inputs, les signaux et si un observalble envoie une donnée.
+//  changeDetection : ChangeDetectionStrategy.OnPush // Le fait d'utiliser un snapshot maintenant fait que le composant ne se met plus à jour automatiquement si on change d'ID dans l'URL. Cependant, un push ne permet que de voir les changements d'inputs, les signaux et si un observalble envoie une donnée.
 })
 export class CountryComponent implements OnInit {
-  public lineChart!: Chart<"line", number[], number>;
+  // public lineChart!: Chart<"line", number[], number>;
   public titlePage: string = '';
   public totalEntries: number = 0;
   public totalMedals: number = 0;
