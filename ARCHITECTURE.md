@@ -1,5 +1,9 @@
 # Projet 2 : Architecture de la solution Olympic Games App
 
+## Contexte global
+
+Ceci est une application développée dans le cadre du Projet 2 de la formation "Développeur Full-Stack - Java et Angular" de l'organisme OpenClassrooms. Ce projet a pour but de représenter des données, sur différents pays, liés à leurs participations à certains jeux olympiques et afficher des détails de ces participations par pays. Ce projet utilise un fichier JSON comme source de données mais l'objectif était d'en faire une architecture maintenable et évolutive pour par la suite utilisé une API et implémenter de nouvelles fonctionnalités.
+
 ## Arborescence du projet
 
 ```text
