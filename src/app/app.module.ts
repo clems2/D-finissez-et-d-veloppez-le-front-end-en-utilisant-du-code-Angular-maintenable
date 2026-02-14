@@ -7,10 +7,10 @@ import { HomeComponent } from './pages/home/home.component';
 import { NotFoundComponent } from './pages/not-found/not-found.component';
 import { CountryComponent } from "./pages/country/country.component";
 import { BackComponent } from './components/back/back.component';
-import { DataCardComponent } from './templates/data-card/data-card.component';
+import { DataCardComponent } from './components/data-card/data-card.component';
 import { HeaderComponent } from './components/header/header.component';
 import { ChartContainerComponent } from './components/chart-container/chart-container.component';
-import { SpinnerComponent } from './templates/spinner/spinner.component';
+import { SpinnerComponent } from './components/spinner/spinner.component';
 
 @NgModule({
   declarations: [AppComponent, ],

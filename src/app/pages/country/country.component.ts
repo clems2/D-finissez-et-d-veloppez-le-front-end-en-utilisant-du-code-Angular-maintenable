@@ -10,7 +10,7 @@ import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
-import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 
 @Component({

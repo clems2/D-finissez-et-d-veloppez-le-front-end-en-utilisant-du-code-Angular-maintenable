@@ -10,7 +10,7 @@ import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
+import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',

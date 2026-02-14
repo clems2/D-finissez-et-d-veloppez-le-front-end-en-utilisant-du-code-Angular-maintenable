@@ -1,5 +1,7 @@
 # Projet 2 : Remarques sur l'architecture et le code de la solution
 
+# Contexte
+Ce document définit l'idée de base d'une architecture propre de l'application et identifie les problèmes de l'application d'origine.
 
 # Remarques globales
 - Il y a des datas affichées sur le terminal du navigateur web.

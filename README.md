@@ -52,24 +52,31 @@ See ARCHITECTURE.md for more details and page screenshots (french version).
 ```text
 src/app/
 │
-├── adapters/
-│   └── chart-adapter.ts (NOT IMPLEMENTED)
-│
 ├── components/
+│   ├── spinner/
+│   │   ├── spinner.component.ts
+│   │   ├── spinner.component.html
+│   │   └── spinner.component.scss
+│   │
 │   ├── header/
 │   │   ├── header.component.ts
-│   │   └── header.component.html
+│   │   ├── header.component.html
+│   │   └── header.component.scss
+│   │
+│   ├── data-card/
+│   │   ├── data-card.component.ts
+│   │   ├── data-card.component.html
+│   │   └── data-card.component.scss
 │   │
 │   ├── chart-container/
 │   │   ├── chart-container.component.ts
-│   │   └── chart-container.component.html
+│   │   ├── chart-container.component.html
+│   │   └── chart-container.component.scss
 │   │
 │   └── back/
 │       ├── back.component.ts
-│       └── back.component.html 
-│
-├── factories/
-│   └── chart.factory.service.ts (NOT IMPLEMENTED)
+│       ├── back.component.html 
+│       └── back.component.scss 
 │
 ├── models/
 │   ├── data-card.ts
@@ -79,15 +86,18 @@ src/app/
 ├── pages/
 │   ├── country/
 │   │   ├── country.component.ts
-│   │   └── country.component.html
+│   │   ├── country.component.html
+│   │   └── country.component.scss
 │   │
 │   ├── home/
 │   │   ├── home.component.ts
-│   │   └── home.component.html
+│   │   ├── home.component.html
+│   │   └── home.component.scss
 │   │
 │   └── not-found/
 │       ├── not-found.component.ts
-│       └── not-found.component.html
+│       ├── not-found.component.html
+│       └── not-found.component.scss
 │
 ├── services/
 │   └── data/
@@ -97,17 +107,9 @@ src/app/
 ├── state/
 │   └── loading-state.ts
 │
-├── templates/
-│   ├── data-card/
-│   │    ├── data-card.component.ts
-│   │    └── data-card.component.html
-│   │
-│   └── spinner/
-│        ├── spinner.component.ts
-│        └── spinner.component.html
-│
 ├── app.component.ts (App-root)
 ├── app.component.html
+├── app.component.scss
 └── app.module.ts
 ```
 

@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input, Input } from '@angular/core';
 import { DataCard } from 'src/app/models/data-card';
-import { DataCardComponent } from 'src/app/templates/data-card/data-card.component';
+import { DataCardComponent } from 'src/app/components/data-card/data-card.component';
 
 @Component({
   selector: 'app-header',
