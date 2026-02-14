@@ -1,53 +1,133 @@
 # OlympicGamesStarter
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 18.0.6.
+Ce projet a été généré avec [Angular CLI](https://github.com/angular/angular-cli) version 18.0.6.
 
-Don't forget to install your node_modules before starting (`npm install`).
+N'oubliez pas d'installer les dépendances avant de démarrer (`npm install`).
 
-## Table of Contents
+## Table des matières
 
-* [Context](#context)
-* [Technologies Used](#technologies-used)
-* [Development server](#development-server)
+* [Contexte](#contexte)
+* [Technologies utilisées](#technologies-utilisées)
+* [Installation](#installation)
+* [Serveur de développement](#serveur-de-développement)
 * [Build](#build)
 * [Architecture](#architecture)
-* [Limitations](#limitations)
-* [Possible improvements](#possible-improvements)
-* [Author](#author)
+* [Limites](#limites)
+* [Améliorations possibles](#améliorations-possibles)
+* [Auteur](#auteur)
 
+---
 
-## Context
+## Contexte
 
-Angular application to visualize Olympic Games statistics, including medal counts by country and participation history.
+Application Angular permettant de visualiser des statistiques sur les Jeux Olympiques, notamment le nombre de médailles par pays et l'historique des participations.
 
-## Technologies Used
+---
+
+## Technologies utilisées
 
 - Angular 18
-
 - TypeScript
-
 - RxJS
-
 - Chart.js
-
 - SCSS
+- Angular Signals (pour les inputs)
+- Architecture basée sur des composants standalone
 
-- Angular Signals (for inputs)
+---
+## Installation
 
-- Standalone components architecture
+### Prérequis
 
-## Development server
+Assurez-vous d'avoir installé les outils suivants :
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
-Or `ng serve --host IP_ADRESS_WIFI_DEVICE` if you want to be able to test the application on an other device than the local device (phone or tablet). You can find IP_ADRESS_WIFI_DEVICE by entering ifconfig or ipconfig (depending on the OS) in the terminal of the device running the application.
+- Git (pour cloner le repository) :
+  https://git-scm.com/install/
+- Node.js (version 18 ou supérieure recommandée)
+  https://nodejs.org/
+
+- npm (installé avec Node.js)
+
+- Angular CLI (version 18)
+
+Installez Angular CLI globalement si ce n'est pas déjà fait :
+
+```bash
+npm install -g @angular/cli
+```
+
+Vérifiez l'installation :
+
+```bash
+node -v
+npm -v
+ng version
+```
+
+---
+
+### Cloner le projet
+
+Clonez le repository Git :
+
+```bash
+git clone https://github.com/clems2/D-finissez-et-d-veloppez-le-front-end-en-utilisant-du-code-Angular-maintenable.git
+```
+
+Accédez au dossier du projet :
+
+```bash
+cd olympic-games-app
+```
+
+---
+
+### Installer les dépendances
+
+Installez les dépendances nécessaires :
+
+```bash
+npm install
+```
+
+Cette commande installera automatiquement :
+
+- Angular
+- RxJS
+- Chart.js
+- TypeScript
+- toutes les dépendances du projet
+
+---
+
+## Serveur de développement
+
+Exécutez `ng serve` pour démarrer un serveur de développement. Accédez ensuite à `http://localhost:4200/`. L'application se rechargera automatiquement si vous modifiez les fichiers sources.
+
+Ou utilisez :
+
+`ng serve --host IP_ADRESS_WIFI_DEVICE`
+
+si vous souhaitez tester l'application sur un autre appareil (téléphone ou tablette).
+
+Vous pouvez trouver votre adresse IP en exécutant :
+
+- `ipconfig` (Windows)
+- `ifconfig` (Mac / Linux)
+
+dans le terminal de l'appareil exécutant l'application.
+
+---
 
 ## Build
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+Exécutez `ng build` pour construire le projet. Les fichiers générés seront stockés dans le dossier `dist/`.
+
+---
 
 ## Architecture
 
-See ARCHITECTURE.md for more details and page screenshots (french version).
+Voir ARCHITECTURE.md pour plus de détails et des captures d'écran de l'application (version française).
 
 ```text
 src/app/
@@ -103,28 +183,36 @@ src/app/
 │   └── data/
 │       └── data.service.ts
 │
-│
 ├── state/
 │   └── loading-state.ts
 │
-├── app.component.ts (App-root)
+├── app.component.ts (composant racine)
 ├── app.component.html
 ├── app.component.scss
 └── app.module.ts
 ```
 
-## Limitations
-- Data loaded from a local JSON and not a real backend API.
-- No authentification or user management.
-- No unit tests or integration tests.
-- Some classes are not implemented and mentionned as possible improvements.
-- No language adaptation.
+---
 
-## Possible improvements
-- Unit tests.
-- Add API backend.
-- Factory and Adapter implementation.
-- Add languages adaptation and visual parameters (light/dark theme for example).
+## Limites
 
-## Author
-Clément Cirou - Student OpenClassrooms
+- Les données sont chargées depuis un fichier JSON local et non depuis une API backend réelle.
+- Pas de système d'authentification ni de gestion des utilisateurs.
+- Aucun test unitaire ni test d'intégration.
+- Pas de support multilingue.
+
+---
+
+## Améliorations possibles
+
+- Ajouter des tests unitaires.
+- Ajouter une API backend.
+- Implémenter les patterns Factory et Adapter (pour les chart et retirer la dépendance à ChartJS).
+- Ajouter la gestion des langues.
+- Ajouter des paramètres visuels (thème clair/sombre par exemple).
+
+---
+
+## Auteur
+
+Clément Cirou - Étudiant OpenClassrooms
