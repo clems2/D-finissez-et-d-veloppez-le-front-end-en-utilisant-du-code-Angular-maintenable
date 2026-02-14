@@ -19,10 +19,8 @@ import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
   standalone: true,
   imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent], 
   styleUrls: ['./country.component.scss'],
-//  changeDetection : ChangeDetectionStrategy.OnPush // Le fait d'utiliser un snapshot maintenant fait que le composant ne se met plus à jour automatiquement si on change d'ID dans l'URL. Cependant, un push ne permet que de voir les changements d'inputs, les signaux et si un observalble envoie une donnée.
 })
 export class CountryComponent implements OnInit {
-  // public lineChart!: Chart<"line", number[], number>;
   public titlePage: string = '';
   public totalEntries: number = 0;
   public totalMedals: number = 0;
@@ -32,11 +30,9 @@ export class CountryComponent implements OnInit {
   //CHART PARAMS
   public years: number[] = [];
   public medals: number[] = [];
-  //Unsubscribe signal Destroy with OnDestroy()
-  //private destroy = new Subject<void>();
   //DestroyRef injection
   private destroyRef = inject(DestroyRef);
-  // Stocké le state actuel pour adapter l'affichage HTML
+  // Stocke le state actuel pour adapter l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
@@ -44,24 +40,6 @@ export class CountryComponent implements OnInit {
 
 
   ngOnInit() {
-    
-    //let countryName: string | null = null
-    //this.route.paramMap.subscribe((param: ParamMap) => countryName = param.get('countryName')); //Si j'ai bien compris, ce n'est pas bon d'avoir deux subscribe car ils ont une dépendance commune (countryName) et créent donc un état transitoire et lent car se base sur deux flux imbriqués.
-
-    //SWITCHMAP VERSION
-//     this.route.paramMap.pipe(
-// //      delay(1000), //Simule un délai de chargement pour voir le spinner
-//       map(params => Number(params.get('id'))),
-//       filter(id => !isNaN(id)), 
-//       //Ecoute le signal destroy, s'il émet une valeur, on se désabonne automatiquement
-//       takeUntilDestroyed(this.destroyRef),
-//       switchMap(id => // On utilise car le paramètre vient de la route qui peut changer et retourne un Observable
-//         this.dataService.stateObservable.pipe(
-//           filter(state => state.status !=='loading'),
-//           map(state => ({state, id}))
-//         ) 
-//       )
-//     )
 
     //SNAPSHOT VERSION
     //SNAPSHOT of the param id
@@ -71,7 +49,7 @@ export class CountryComponent implements OnInit {
       return;
     }
     this.dataService.stateObservable.pipe(
-//      delay(1000), //Simule un délai de chargement pour voir le spinner
+//      delay(5000), //Simule un délai de chargement pour tester le spinner
       filter(state => state.status !=='loading'),
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(state => {
@@ -105,12 +83,4 @@ export class CountryComponent implements OnInit {
       }   
     )
   }
- 
-  //Méthode with Subject and signal and takeUntil
-  // ngOnDestroy(): void {
-  //   //Émet une valeur pour indiquer la destruction
-  //   this.destroy.next();
-  //   this.destroy.complete();
-  // }
 }
-//Dans le cas actuel, étant un fichier JSON, on pourrait juste utiliser Rxjs take(1) pour ne prendre qu'une seule émission et éviter les fuites de mémoire. Mais dans le cas d'une API REST, on pourrait avoir des mises à jour régulières des données (via WebSocket par exemple) et il faudrait alors gérer la désinscription dans ngOnDestroy().

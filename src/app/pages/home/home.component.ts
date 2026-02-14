@@ -20,8 +20,6 @@ import { SpinnerComponent } from 'src/app/templates/spinner/spinner.component';
   styleUrls: ['./home.component.scss'],
 })
 export class HomeComponent implements OnInit {
-  // public pieChart!: Chart<"pie", number[], string>;
-  // public totalCountries: number = 0
   public totalJOs: number = 0
   public error!:string
   titlePage: string = "Medals per Country";
@@ -33,11 +31,11 @@ export class HomeComponent implements OnInit {
   public sumOfAllMedalsYears: number[] = [];
   public countries: string[] = [];
   public ids : number[] = [];
-  //Signal to unsubscribe when destroying the component with takeUntilDestroyed()
-  //  private destroy = new Subject<void>();
+
   //DestroyRef injection
   private destroyRef = inject(DestroyRef);
-  //state courant pour l'affichage HTML
+
+  //State courant pour l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
 
@@ -70,17 +68,7 @@ export class HomeComponent implements OnInit {
           { label: 'Number of Countries', value: this.countries.length },
           { label: 'Number of JOs', value: this.totalJOs }
         ];
-//          this.buildPieChart(this.countries, this.sumOfAllMedalsYears); // TODO A RETirer et laisser la responsabilité au ChatContainer
       });   
   }
-
-//Without DestroyRef and takeUntilDestroyed (using Subject)
-  /*
-  ngOnDestroy(): void {
-    //Emit a value to indicate destruction
-    this.destroy.next();
-    this.destroy.complete();
-  }
-*/
 }
 

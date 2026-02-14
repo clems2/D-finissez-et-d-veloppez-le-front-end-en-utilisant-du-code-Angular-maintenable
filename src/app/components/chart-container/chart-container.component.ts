@@ -16,16 +16,15 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
   ids = input<number[]>([]);
   labels = input<(string | number)[]>([]);
   values = input<number[]>([]);
-  legend = input<string>(''); //Pas obligatoirement une input signal
+  legend = input<string>(''); //Pas obligatoirement une input signal vu que dans notre cas elle ne change pas d'état
   @ViewChild('chartCanvas') canvas!: ElementRef<HTMLCanvasElement>;
 
   private chart?: Chart;
-  // signal pour indiquer si les éléments sont prêts (notamment le canvas)
-  //private canvasReady = signal(false);
+
 
 
   constructor(private router: Router) {
-    //Une erreur Runtime m'oblige à utiliser effect() dans un contexte d'injection tel qu'un constructor
+    //Une erreur Runtime oblige à utiliser effect() dans un contexte d'injection tel qu'un constructor
      effect(() => {
       const type = this.type();
       const labels = this.labels();
@@ -39,7 +38,7 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
     });
    }
   
-  ngAfterViewInit(): void { //TODO implements adapter and Factory
+  ngAfterViewInit(): void {
   }
   ngOnDestroy(): void {
     if (this.chart) {
@@ -52,7 +51,7 @@ export class ChartContainerComponent implements AfterViewInit, OnDestroy {
     values : number[]
   ) {
 
-    // Détruire le graphique existant s'il y en a un
+    // Détruit le graphique existant s'il y en a un
     if (this.chart) {
       this.chart.destroy();
     }
