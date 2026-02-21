@@ -19,6 +19,8 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   standalone: true,
   imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent], 
   styleUrls: ['./country.component.scss'],
+  changeDetection : ChangeDetectionStrategy.OnPush
+
 })
 export class CountryComponent implements OnInit {
   public titlePage: string = '';

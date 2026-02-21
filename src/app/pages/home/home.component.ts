@@ -1,7 +1,6 @@
-import { NgIf } from '@angular/common';
-import {Component, DestroyRef, inject, OnInit} from '@angular/core';
-import Chart from 'chart.js/auto';
-import { delay, Subject, takeUntil } from 'rxjs';
+import { AsyncPipe, NgIf } from '@angular/common';
+import {ChangeDetectionStrategy, Component, DestroyRef, inject} from '@angular/core';
+import { delay, map} from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
@@ -9,17 +8,18 @@ import { Olympic } from 'src/app/models/olympic';
 import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent, NgIf, SpinnerComponent],
+  imports: [HeaderComponent, ChartContainerComponent, NgIf, SpinnerComponent, AsyncPipe],
   styleUrls: ['./home.component.scss'],
+  changeDetection : ChangeDetectionStrategy.OnPush
+  
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent {
   public totalJOs: number = 0
   public error!:string
   titlePage: string = "Medals per Country";
@@ -40,36 +40,43 @@ export class HomeComponent implements OnInit {
   public stateError: string = '';
 
 
+  public homeDatas$ = this.dataservice.stateObservable$.pipe(
+      // delay(5000), //Simule un délai de chargement pour voir le spinner
+      map(
+        state => {
+          if(state.status === 'loading')return {state: 'loading' as LoadingStatus};
+          if (state.status !== 'loaded') {
+            return{
+              state: state.status,
+              error: state.error
+            };
+          }
+          
+          const olympics = state.data;
+          if (!olympics || olympics.length === 0) {
+            state.status = 'empty';
+            return;
+          }
+
+          const totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
+          const countries = olympics.map((olympic: Olympic) => olympic.country);
+          const ids = olympics.map((olympic: Olympic) => olympic.id);
+          const sumOfAllMedalsYears = olympics.map((olympic: Olympic) => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
+          const dataCards :DataCard[] = [
+            { label: 'Number of Countries', value: countries.length },
+            { label: 'Number of JOs', value: totalJOs }
+          ];
+          return {
+            state: 'loaded' as LoadingStatus,
+            countries: countries,
+            ids: ids,
+            sumOfAllMedalsYears: sumOfAllMedalsYears,
+            dataCards: dataCards
+          }
+        }
+      ));   
+  
   constructor(private dataservice:DataService) { }
 
-  ngOnInit() {
-    this.dataservice.stateObservable$.pipe(
-      // delay(5000), //Simule un délai de chargement pour voir le spinner
-      takeUntilDestroyed(this.destroyRef))
-      .subscribe(
-      state => {
-        this.state = state.status;
-        if(state.status === 'loading')return;
-        if (state.status !== 'loaded') {
-          this.stateError = state.error || 'Unknown error';
-          return;
-        }
-        
-        const olympics = state.data;
-        if (!olympics || olympics.length === 0) {
-          this.state = 'empty';
-          return;
-        }
-
-        this.totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
-        this.countries = olympics.map((olympic: Olympic) => olympic.country);
-        this.ids = olympics.map((olympic: Olympic) => olympic.id);
-        this.sumOfAllMedalsYears = olympics.map(olympic => olympic.participations.reduce((acc, p)=>acc+p.medalsCount,0));
-        this.dataCards = [
-          { label: 'Number of Countries', value: this.countries.length },
-          { label: 'Number of JOs', value: this.totalJOs }
-        ];
-      });   
-  }
 }
 

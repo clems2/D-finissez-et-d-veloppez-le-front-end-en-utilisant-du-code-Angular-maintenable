@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { DataService } from './services/data.service';
 import { take } from 'rxjs';
 
@@ -6,6 +6,8 @@ import { take } from 'rxjs';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection : ChangeDetectionStrategy.OnPush
+  
 })
 export class AppComponent {
   constructor(private dataService : DataService){

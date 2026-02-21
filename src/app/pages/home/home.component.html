@@ -1,22 +1,22 @@
-<div class="page-container">
+<div class="page-container" *ngIf="homeDatas$ | async as homeDatas">
   <!-- Loading -->
-  <div class="page-content" *ngIf="state === 'loading'">
+  <div class="page-content" *ngIf="homeDatas.state === 'loading'">
     <app-header [title]="titlePage"></app-header>
     <app-spinner></app-spinner>
   </div>
 
   <!-- Error -->
-  <div class="page-content" *ngIf="state === 'error'">
+  <div class="page-content" *ngIf="homeDatas.state === 'error'">
     <app-header title="Error"></app-header> 
-    <p>{{ stateError }}</p>
+    <p>{{ homeDatas.error }}</p>
   </div>
   <!-- Empty -->
-  <div class="page-content" *ngIf="state === 'empty'">
+  <div class="page-content" *ngIf="homeDatas.state === 'empty'">
     <app-header title="Aucune Donnée"></app-header>
   </div>
   <!-- Loaded-->
-  <div class="page-content" *ngIf="state === 'loaded'">
-    <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
-    <app-chart-container [type]="'pie'" [ids]="ids" [labels]="countries" [values]="sumOfAllMedalsYears" legend="Total Medals by Country"></app-chart-container>
+  <div class="page-content" *ngIf="homeDatas.state === 'loaded'">
+    <app-header [title]="titlePage" [dataCards]="homeDatas.dataCards!"></app-header>
+    <app-chart-container [type]="'pie'" [ids]="homeDatas.ids!" [labels]="homeDatas.countries!" [values]="homeDatas.sumOfAllMedalsYears!" legend="Total Medals by Country"></app-chart-container>
   </div>
 </div>
