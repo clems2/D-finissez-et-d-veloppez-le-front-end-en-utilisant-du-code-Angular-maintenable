@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from './services/data.service';
+import { take } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,8 @@ export class AppComponent {
   }
   
   title = 'Olympic Games App';
+
+  ngOnInit() {
+    this.dataService.loadOlympics().pipe(take(1)).subscribe();
+  }
 }

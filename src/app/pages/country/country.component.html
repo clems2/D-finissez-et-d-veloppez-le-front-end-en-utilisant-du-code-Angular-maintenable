@@ -21,6 +21,6 @@
   <div class="page-content" *ngIf="state === 'loaded'">
     <app-header [title]="titlePage" [dataCards]="dataCards"></app-header>
     <app-chart-container [type]="'line'" [labels]="years" [values]="medals" legend="Medals Over Years"></app-chart-container>
-    <app-back [link]="['']" text="Go back"></app-back>
+    <app-back text="Go back"></app-back>
   </div>
 </div>

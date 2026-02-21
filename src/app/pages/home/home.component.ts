@@ -43,12 +43,13 @@ export class HomeComponent implements OnInit {
   constructor(private dataservice:DataService) { }
 
   ngOnInit() {
-    this.dataservice.stateObservable.pipe(
+    this.dataservice.stateObservable$.pipe(
       // delay(5000), //Simule un délai de chargement pour voir le spinner
       takeUntilDestroyed(this.destroyRef))
       .subscribe(
       state => {
         this.state = state.status;
+        if(state.status === 'loading')return;
         if (state.status !== 'loaded') {
           this.stateError = state.error || 'Unknown error';
           return;

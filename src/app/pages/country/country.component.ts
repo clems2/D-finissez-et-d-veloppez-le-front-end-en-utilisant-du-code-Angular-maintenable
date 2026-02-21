@@ -48,9 +48,9 @@ export class CountryComponent implements OnInit {
       this.router.navigate(['/not-found']);
       return;
     }
-    this.dataService.stateObservable.pipe(
+    this.dataService.stateObservable$.pipe(
 //      delay(5000), //Simule un délai de chargement pour tester le spinner
-      filter(state => state.status !=='loading'),
+      filter(state => state.status !=='loading'), // pipe asynchrone pour ne pas faire de traitement tant que les données ne sont pas chargées , permet de ne pas faire de traitement inutile et d'éviter les erreurs d'accès à des données non chargées, Permet de transmettre les données à l'enfant avec l'enfant qui s'adapte à l'état du parent, permet aussi de s'adapter en Onpush pour que angular détecte
       takeUntilDestroyed(this.destroyRef)
     ).subscribe(state => {
         this.state = state.status;
