@@ -1,9 +1,7 @@
-import { NgIf } from '@angular/common';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit} from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {ActivatedRoute, ParamMap, Router} from '@angular/router';
-import Chart from 'chart.js/auto';
-import { delay, filter, map, Subject, switchMap, takeUntil } from 'rxjs';
+import { AsyncPipe, NgIf } from '@angular/common';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
+import {ActivatedRoute, Router} from '@angular/router';
+import { delay, map } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
@@ -17,72 +15,82 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   selector: 'app-country',
   templateUrl: './country.component.html',
   standalone: true,
-  imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent], 
+  imports: [HeaderComponent, ChartContainerComponent, BackComponent, NgIf, SpinnerComponent, AsyncPipe], 
   styleUrls: ['./country.component.scss'],
   changeDetection : ChangeDetectionStrategy.OnPush
 
 })
-export class CountryComponent implements OnInit {
-  public titlePage: string = '';
-  public totalEntries: number = 0;
-  public totalMedals: number = 0;
-  public totalAthletes: number = 0;
-  public error!: string;
-  public dataCards : DataCard[] = [];
-  //CHART PARAMS
-  public years: number[] = [];
-  public medals: number[] = [];
-  //DestroyRef injection
-  private destroyRef = inject(DestroyRef);
+export class CountryComponent {
+
   // Stocke le state actuel pour adapter l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
+  private readonly countryId = Number(this.route.snapshot.paramMap.get('id'));
+
+  public countryDatas$ = this.dataService.stateObservable$.pipe(
+    // delay(5000), //Simule un délai de chargement pour voir le spinner
+    map(
+      state => {
+        if(isNaN(this.countryId)|| state.status === 'error'){
+          this.router.navigate(['/not-found']);
+          return {
+            status: state.status,
+            titlePage: '',
+            years: [],
+            medals: [],
+            dataCards: [],
+            error: state.error || 'Unknown error'
+          };
+        }
+        if(state.status === 'loading' || state.status === 'empty'){
+          return {
+            status: state.status,
+            titlePage: '',
+            years: [],
+            medals: [],
+            dataCards: [],
+            error: state.error
+            };
+        }
+        
+        const country = state.data?.find(o => o.id === this.countryId);
+        if (!country) {
+          this.router.navigate(['/not-found']);
+          return {
+            status: state.status,
+            titlePage: '',
+            years: [],
+            medals: [],
+            dataCards: [],
+            error: state.error
+          };
+        }
+        const titlePage = country.country;
+        const participations = country.participations;
+        const totalEntries = participations.length;
+        const years = participations.map(p => p.year);
+        const medals = participations.map(p => p.medalsCount);
+        const totalMedals = medals.reduce((acc,p) => acc + p, 0);
+        const nbAthletes = participations.map(p => p.athleteCount);
+        const totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
+        const dataCards :DataCard[] = [
+          { label: 'Number of Entries', value: totalEntries },
+          { label: 'Number of Medals', value: totalMedals },
+          { label: 'Number of Athletes', value: totalAthletes }
+        ];
+        return {
+          status: state.status,
+          titlePage : titlePage,
+          years : years,
+          medals :medals,
+          dataCards : dataCards,
+          error: state.error
+        };
+      }
+    )
+  );
+
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 
-
-  ngOnInit() {
-
-    //SNAPSHOT VERSION
-    //SNAPSHOT of the param id
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    if (isNaN(id)) {
-      this.router.navigate(['/not-found']);
-      return;
-    }
-    this.dataService.stateObservable$.pipe(
-//      delay(5000), //Simule un délai de chargement pour tester le spinner
-      filter(state => state.status !=='loading'), // pipe asynchrone pour ne pas faire de traitement tant que les données ne sont pas chargées , permet de ne pas faire de traitement inutile et d'éviter les erreurs d'accès à des données non chargées, Permet de transmettre les données à l'enfant avec l'enfant qui s'adapte à l'état du parent, permet aussi de s'adapter en Onpush pour que angular détecte
-      takeUntilDestroyed(this.destroyRef)
-    ).subscribe(state => {
-        this.state = state.status;
-        
-        if(state.status === 'loaded'){
-          const country = state.data?.find(o => o.id === id);
-          if (!country) {
-            this.router.navigate(['/not-found']);
-            return;
-          }
-          this.titlePage = country.country;
-          const participations = country.participations;
-          this.totalEntries = participations.length;
-          this.years = participations.map(p => p.year);
-          this.medals = participations.map(p => p.medalsCount);
-          this.totalMedals = this.medals.reduce((acc,p) => acc + p, 0);
-          const nbAthletes = participations.map(p => p.athleteCount);
-          this.totalAthletes = nbAthletes.reduce((acc,p) => acc + p, 0);
-          this.dataCards = [
-            { label: 'Number of Entries', value: this.totalEntries },
-            { label: 'Number of Medals', value: this.totalMedals },
-            { label: 'Number of Athletes', value: this.totalAthletes }
-          ];
-        } 
-        else {
-          this.stateError = state.error || 'Unknown error';
-          this.router.navigate(['/not-found']);
-          return;
-        }      
-      }   
-    )
-  }
 }

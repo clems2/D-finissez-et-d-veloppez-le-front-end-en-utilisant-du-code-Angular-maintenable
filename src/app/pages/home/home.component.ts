@@ -1,5 +1,5 @@
 import { AsyncPipe, NgIf } from '@angular/common';
-import {ChangeDetectionStrategy, Component, DestroyRef, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component} from '@angular/core';
 import { delay, map} from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
@@ -20,21 +20,7 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
   
 })
 export class HomeComponent {
-  public totalJOs: number = 0
-  public error!:string
   titlePage: string = "Medals per Country";
-
-  //Data cards implementation
-  public dataCards : DataCard[] = [];
-
-  //Chart params
-  public sumOfAllMedalsYears: number[] = [];
-  public countries: string[] = [];
-  public ids : number[] = [];
-
-  //DestroyRef injection
-  private destroyRef = inject(DestroyRef);
-
   //State courant pour l'affichage HTML
   public state: LoadingStatus = 'loading';
   public stateError: string = '';
@@ -44,18 +30,27 @@ export class HomeComponent {
       // delay(5000), //Simule un délai de chargement pour voir le spinner
       map(
         state => {
-          if(state.status === 'loading')return {state: 'loading' as LoadingStatus};
-          if (state.status !== 'loaded') {
-            return{
+          if(state.status === 'loading' || state.status === 'empty' || state.status === 'error'){
+            return {
               state: state.status,
+              countries: [],
+              ids: [],
+              sumOfAllMedalsYears: [],
+              dataCards: [],
               error: state.error
             };
-          }
-          
+          }  
           const olympics = state.data;
           if (!olympics || olympics.length === 0) {
             state.status = 'empty';
-            return;
+            return {
+              state: state.status,
+              countries: [],
+              ids: [],
+              sumOfAllMedalsYears: [],
+              dataCards: [],
+              error: state.error
+            };
           }
 
           const totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
