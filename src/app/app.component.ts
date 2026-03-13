@@ -16,6 +16,6 @@ export class AppComponent {
   title = 'Olympic Games App';
 
   ngOnInit() {
-    this.dataService.loadOlympics().pipe(take(1)).subscribe();
+    this.dataService.loadOlympics().pipe(take(1)).subscribe(); //TODO catchError
   }
 }

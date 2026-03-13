@@ -1,7 +1,7 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import {ChangeDetectionStrategy, Component} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
-import { delay, map } from 'rxjs';
+import { catchError, delay, map, of } from 'rxjs';
 import { BackComponent } from 'src/app/components/back/back.component';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
@@ -9,6 +9,7 @@ import { DataCard } from 'src/app/models/data-card';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { CountryViewModel } from 'src/app/models/country-view-model';
 
 
 @Component({
@@ -21,51 +22,25 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 
 })
 export class CountryComponent {
-
-  // Stocke le state actuel pour adapter l'affichage HTML
-  public state: LoadingStatus = 'loading';
-  public stateError: string = '';
   private readonly countryId = Number(this.route.snapshot.paramMap.get('id'));
 
   public countryDatas$ = this.dataService.stateObservable$.pipe(
     // delay(5000), //Simule un délai de chargement pour voir le spinner
     map(
       state => {
-        if(isNaN(this.countryId)|| state.status === 'error'){
-          this.router.navigate(['/not-found']);
-          return {
-            status: state.status,
-            titlePage: '',
-            years: [],
-            medals: [],
-            dataCards: [],
-            error: state.error || 'Unknown error'
-          };
+        if(state.status !== 'loaded'|| !state.data) {
+          return this.createEmptyCountryViewModel(state.status, state.error);
         }
-        if(state.status === 'loading' || state.status === 'empty'){
-          return {
-            status: state.status,
-            titlePage: '',
-            years: [],
-            medals: [],
-            dataCards: [],
-            error: state.error
-            };
+        if(isNaN(this.countryId)) {
+          this.router.navigate(['/not-found']);
+          return this.createEmptyCountryViewModel('error','Invalid country id');
         }
         
         const country = state.data?.find(o => o.id === this.countryId);
         if (!country) {
           this.router.navigate(['/not-found']);
-          return {
-            status: state.status,
-            titlePage: '',
-            years: [],
-            medals: [],
-            dataCards: [],
-            error: state.error
-          };
+          return this.createEmptyCountryViewModel('error','Country not found');
         }
-        const titlePage = country.country;
         const participations = country.participations;
         const totalEntries = participations.length;
         const years = participations.map(p => p.year);
@@ -79,17 +54,34 @@ export class CountryComponent {
           { label: 'Number of Athletes', value: totalAthletes }
         ];
         return {
-          status: state.status,
-          titlePage : titlePage,
-          years : years,
-          medals :medals,
+          state: state.status,
+          titlePage : country.country,
           dataCards : dataCards,
+          chartData: {
+            labels: years,
+            values: medals
+          },
           error: state.error
         };
       }
-    )
+    ),
+    catchError(e => {
+      return of(this.createEmptyCountryViewModel('error','Erreur lors de la préparation des données pour l\'affichage'));
+    })
   );
 
+  private createEmptyCountryViewModel(status: LoadingStatus, error?: string): CountryViewModel {
+    return {
+      state: status,
+      titlePage: '',
+      dataCards: [],
+      chartData: {
+        labels: [],
+        values: []
+      },
+      error: error
+    };
+  }
   constructor(private route: ActivatedRoute, private router: Router, private dataService : DataService) {
   }
 

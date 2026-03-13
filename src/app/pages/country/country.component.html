@@ -1,26 +1,34 @@
-<div class="page-container" *ngIf="countryDatas$ | async as countryDatas">
+@if (countryDatas$ | async; as countryDatas) {
   <!-- Loading -->
-  <div class="page-content" *ngIf="countryDatas.status === 'loading'" >  
-  <app-spinner></app-spinner>
-  </div>
+  @if (countryDatas.state === 'loading') {
+    <div class="page-content">
+      <app-spinner></app-spinner>
+    </div>
+  }
 
-  <!-- Error --> 
-  <div class="page-content" *ngIf="countryDatas.status === 'error'" >  
-  <app-header title="Error"></app-header> 
-  <p>{{ countryDatas.error }}</p>
-  <app-back [link]="['']" text="Go back"></app-back>
-  </div>
+  <!-- Error -->
+  @if (countryDatas.state === 'error') {
+    <div class="page-content">
+      <app-header title="Error"></app-header>
+      <p>{{ countryDatas.error }}</p>
+      <app-back [link]="['']" text="Go back"></app-back>
+    </div>
+  }
 
   <!-- Empty -->
-  <div class="page-content" *ngIf="countryDatas.status === 'empty'" >  
-  <app-header title="Aucune Donnée"></app-header> 
-  <app-back [link]="['']" text="Go back"></app-back>
-  </div>
+  @if (countryDatas.state === 'empty') {
+    <div class="page-content">
+      <app-header title="Aucune Donnée"></app-header>
+      <app-back [link]="['']" text="Go back"></app-back>
+    </div>
+  }
 
   <!-- Loaded-->
-  <div class="page-content" *ngIf="countryDatas.status === 'loaded'"> 
-    <app-header [title]="countryDatas.titlePage" [dataCards]="countryDatas.dataCards"></app-header>
-    <app-chart-container [type]="'line'" [labels]="countryDatas.years" [values]="countryDatas.medals" legend="Medals Over Years"></app-chart-container>
-    <app-back text="Go back"></app-back>
-  </div>
-</div>
+  @if (countryDatas.state === 'loaded') {
+    <div class="page-content">
+      <app-header [title]="countryDatas.titlePage" [dataCards]="countryDatas.dataCards"></app-header>
+      <app-chart-container [type]="'line'" [labels]="countryDatas.chartData.labels" [values]="countryDatas.chartData.values" legend="Medals Over Years"></app-chart-container>
+      <app-back text="Go back"></app-back>
+    </div>
+  }
+}

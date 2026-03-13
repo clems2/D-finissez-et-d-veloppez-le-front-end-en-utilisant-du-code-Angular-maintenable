@@ -1,6 +1,6 @@
 import { AsyncPipe, NgIf } from '@angular/common';
 import {ChangeDetectionStrategy, Component} from '@angular/core';
-import { delay, map} from 'rxjs';
+import { catchError, delay, map, Observable, of} from 'rxjs';
 import { ChartContainerComponent } from 'src/app/components/chart-container/chart-container.component';
 import { HeaderComponent } from 'src/app/components/header/header.component';
 import { DataCard } from 'src/app/models/data-card';
@@ -9,6 +9,7 @@ import { Participation } from 'src/app/models/participation';
 import { DataService } from 'src/app/services/data.service';
 import { LoadingStatus } from 'src/app/state/loading-state';
 import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
+import { HomeViewModel } from 'src/app/models/home-view-model';
 
 @Component({
   selector: 'app-home',
@@ -21,38 +22,16 @@ import { SpinnerComponent } from 'src/app/components/spinner/spinner.component';
 })
 export class HomeComponent {
   titlePage: string = "Medals per Country";
-  //State courant pour l'affichage HTML
-  public state: LoadingStatus = 'loading';
-  public stateError: string = '';
 
 
-  public homeDatas$ = this.dataservice.stateObservable$.pipe(
+  public homeDatas$:Observable<HomeViewModel> = this.dataservice.stateObservable$.pipe(
       // delay(5000), //Simule un délai de chargement pour voir le spinner
       map(
         state => {
-          if(state.status === 'loading' || state.status === 'empty' || state.status === 'error'){
-            return {
-              state: state.status,
-              countries: [],
-              ids: [],
-              sumOfAllMedalsYears: [],
-              dataCards: [],
-              error: state.error
-            };
+          if(state.status != 'loaded' || !state.data) {
+            return this.createEmptyHomeViewModel(state.status,state.error); 
           }  
-          const olympics = state.data;
-          if (!olympics || olympics.length === 0) {
-            state.status = 'empty';
-            return {
-              state: state.status,
-              countries: [],
-              ids: [],
-              sumOfAllMedalsYears: [],
-              dataCards: [],
-              error: state.error
-            };
-          }
-
+          const olympics : Olympic[] = state.data;
           const totalJOs = Array.from(new Set(olympics.map((olympic: Olympic) => olympic.participations.map((f: Participation) => f.year)).flat())).length;
           const countries = olympics.map((olympic: Olympic) => olympic.country);
           const ids = olympics.map((olympic: Olympic) => olympic.id);
@@ -62,15 +41,34 @@ export class HomeComponent {
             { label: 'Number of JOs', value: totalJOs }
           ];
           return {
-            state: 'loaded' as LoadingStatus,
-            countries: countries,
-            ids: ids,
-            sumOfAllMedalsYears: sumOfAllMedalsYears,
-            dataCards: dataCards
+            state: state.status,
+            dataCards: dataCards,
+            chartData: {
+              ids: ids,
+              labels: countries,
+              values: sumOfAllMedalsYears
+            }
           }
         }
-      ));   
+      ),
+      catchError(e => {
+        return of(this.createEmptyHomeViewModel('error','Erreur lors de la préparation des données pour l\'affichage'));
+      })
+    );   
   
+  private createEmptyHomeViewModel(status: LoadingStatus, error?: string): HomeViewModel {
+    return {
+      state: status,
+      dataCards: [],
+      chartData: {
+        ids: [],
+        labels: [],
+        values: []
+      },
+      error: error
+    };
+  }
+
   constructor(private dataservice:DataService) { }
 
 }
